@@ -19,13 +19,19 @@
         }
         #canvasContainer {
             position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             background: radial-gradient(circle at top left, rgba(115, 125, 255, 0.16), transparent 20%),
                         rgba(8, 18, 33, 1);
             overflow: hidden;
+            padding: 20px;
         }
         #gameCanvas {
-            width: 100%;
-            height: 100%;
+            width: 770px;
+            height: 490px;
+            max-width: calc(100vw - 320px);
+            max-height: calc(100vh - 40px);
             display: block;
             background: #091523;
         }
@@ -121,7 +127,7 @@
 <body>
     <div id="game">
         <section id="canvasContainer">
-            <canvas id="gameCanvas" width="1040" height="700"></canvas>
+            <canvas id="gameCanvas" width="770" height="490"></canvas>
             <div class="overlay">
                 <strong>Objetivo:</strong> Defiende la base hasta la ola 10.
                 Coloca torres en los bloques verdes, mejora con cuidado y rompe la defensa enemiga.
@@ -194,14 +200,13 @@
         const upgradeBtn = document.getElementById('upgradeTower');
         const resetBtn = document.getElementById('resetGame');
 
-        const cols = 13;
-        const rows = 8;
-        const cellSize = 80;
+        const cols = 11;
+        const rows = 7;
+        const cellSize = 70;
         const path = [
             {x:0,y:3},{x:1,y:3},{x:2,y:3},{x:3,y:3},{x:4,y:3},
-            {x:4,y:2},{x:4,y:1},{x:5,y:1},{x:6,y:1},{x:7,y:1},
-            {x:7,y:2},{x:7,y:3},{x:7,y:4},{x:8,y:4},{x:9,y:4},
-            {x:10,y:4},{x:11,y:4},{x:12,y:4}
+            {x:4,y:2},{x:5,y:2},{x:6,y:2},{x:6,y:3},{x:6,y:4},
+            {x:7,y:4},{x:8,y:4},{x:9,y:4},{x:10,y:4}
         ];
         const pathMap = new Set(path.map(cell => `${cell.x},${cell.y}`));
         const buildable = [];
@@ -268,21 +273,25 @@
             });
         }
 
-        function getCellFromMouse(event) {
+        function getMousePosition(event) {
             const rect = canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
-            return { x: Math.floor(x / cellSize), y: Math.floor(y / cellSize) };
+            return { x, y, cellX: Math.floor(x / cellSize), cellY: Math.floor(y / cellSize) };
+        }
+
+        function distance(x1, y1, x2, y2) {
+            return Math.hypot(x2 - x1, y2 - y1);
         }
 
         function handleCanvasClick(event) {
             if (gameState.waveActive && gameState.spawnQueue.length === 0 && gameState.enemies.length === 0) {
                 gameState.waveActive = false;
             }
-            const cell = getCellFromMouse(event);
-            if (cell.x < 0 || cell.x >= cols || cell.y < 0 || cell.y >= rows) return;
+            const pos = getMousePosition(event);
+            if (pos.cellX < 0 || pos.cellX >= cols || pos.cellY < 0 || pos.cellY >= rows) return;
 
-            const tower = gameState.towers.find(t => t.x === cell.x && t.y === cell.y);
+            const tower = gameState.towers.find(t => distance(t.x, t.y, pos.x, pos.y) <= 24);
             if (tower) {
                 gameState.selectedTower = tower;
                 gameState.message = `Torre ${towerTypes[tower.type].name} seleccionada. Nivel ${tower.level}.`;
@@ -290,13 +299,13 @@
                 return;
             }
 
-            if (!buildable.some(pos => pos.x === cell.x && pos.y === cell.y)) {
+            if (!buildable.some(pos2 => pos2.x === pos.cellX && pos2.y === pos.cellY)) {
                 gameState.message = 'Ese sector no es construible.';
                 updateUI();
                 return;
             }
 
-            if (gameState.towers.some(t => t.x === cell.x && t.y === cell.y)) {
+            if (gameState.towers.some(t => t.gridX === pos.cellX && t.gridY === pos.cellY)) {
                 gameState.message = 'Ya hay una torre en esa posición.';
                 updateUI();
                 return;
@@ -311,8 +320,10 @@
 
             gameState.gold -= towerType.cost;
             gameState.towers.push({
-                x: cell.x,
-                y: cell.y,
+                x: pos.x,
+                y: pos.y,
+                gridX: pos.cellX,
+                gridY: pos.cellY,
                 type: gameState.selectedType,
                 cooldown: 0,
                 level: 1
@@ -427,7 +438,7 @@
                 const towerType = towerTypes[tower.type];
                 tower.cooldown -= delta;
                 if (tower.cooldown > 0) return;
-                const towerPos = { x: tower.x * cellSize + cellSize / 2, y: tower.y * cellSize + cellSize / 2 };
+                const towerPos = { x: tower.x, y: tower.y };
                 let nearest = null;
                 let bestDist = Infinity;
                 gameState.enemies.forEach(enemy => {
@@ -536,8 +547,8 @@
 
         function drawTowers() {
             gameState.towers.forEach(tower => {
-                const x = tower.x * cellSize + cellSize / 2;
-                const y = tower.y * cellSize + cellSize / 2;
+                const x = tower.x;
+                const y = tower.y;
                 const towerType = towerTypes[tower.type];
                 ctx.fillStyle = towerType.color;
                 ctx.beginPath();

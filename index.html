@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>War World X - Intro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            background-color: #0a0a0a;
+        }
+
+        .intro-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="2"/></filter></defs><rect width="1200" height="800" fill="%23000" filter="url(%23noise)" opacity="0.1"/></svg>');
+            opacity: 0.3;
+        }
+
+        .intro-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: #fff;
+            max-width: 800px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .title {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            letter-spacing: 3px;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+            50% { text-shadow: 0 0 30px rgba(255, 100, 0, 0.9); }
+            100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #e74c3c;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            animation: slideIn 1.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 50px;
+            color: #bdc3c7;
+            animation: fadeInUp 2s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            animation: popIn 2.5s ease-out;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+        }
+
+        .feature-text {
+            font-size: 1rem;
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 3s ease-out;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border: 2px solid #f39c12;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.8);
+            transform: scale(1.05);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-start {
+            border-color: #27ae60;
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .btn-start:hover {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.8);
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 30px;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #e74c3c, #f39c12, #2ecc71);
+            animation: loading 3s ease-in-out forwards;
+        }
+
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 215, 0, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="intro-container">
+        <div class="video-background"></div>
+        <div class="particles" id="particles"></div>
+
+        <div class="intro-content">
+            <h1 class="title">⚔ WAR WORLD X ⚔</h1>
+            <h2 class="subtitle">La Batalla por la Supervivencia</h2>
+
+            <p class="description">
+                Bienvenido a un mundo sumido en el caos. Las naciones luchan por el poder,
+                los recursos escasean y solo los más estratégicos sobrevivirán. <br><br>
+                Toma el control, construye tu imperio y lidera tus fuerzas hacia la victoria.
+            </p>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">⚙️</div>
+                    <div class="feature-text">ESTRATEGIA</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💣</div>
+                    <div class="feature-text">BATALLA</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🏰</div>
+                    <div class="feature-text">CONQUISTA</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🌍</div>
+                    <div class="feature-text">SUPERVIVENCIA</div>
+                </div>
+            </div>
+
+            <div class="buttons-container">
+                <button class="btn btn-start" onclick="startGame()">Iniciar Juego</button>
+                <button class="btn" onclick="showCredits()">Acerca De</button>
+            </div>
+
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>War World X © 2026 | Estrategia • Batalla • Supervivencia</p>
+        </div>
+    </div>
+
+    <script>
+        // Generar partículas flotantes
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 4 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animation = `float ${Math.random() * 20 + 10}s infinite`;
+                container.appendChild(particle);
+            }
+        }
+
+        // Agregar animación de flotación
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
+                50% { transform: translateY(-20px) translateX(10px); opacity: 0.8; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        createParticles();
+
+        // Funciones de botones
+        function startGame() {
+            alert('¡El juego está en desarrollo! Prepárate para la batalla...');
+            // Aquí se redireccionaría al juego real
+            // window.location.href = 'game.html';
+        }
+
+        function showCredits() {
+            alert('War World X\n\nUn juego de Guerra, Estrategia y Supervivencia\n\nDesarrollo: War World Studios\nAño: 2026\n\n¡Que comience la guerra!');
+        }
+    </script>
+</body>
+</html>

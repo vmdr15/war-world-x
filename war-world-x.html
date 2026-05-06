@@ -339,8 +339,8 @@
 
             gameState.gold -= towerType.cost;
             gameState.towers.push({
-                x: pos.x,
-                y: pos.y,
+                x: (pos.cellX + 0.5) * cellSize,
+                y: (pos.cellY + 0.5) * cellSize,
                 gridX: pos.cellX,
                 gridY: pos.cellY,
                 type: gameState.selectedType,

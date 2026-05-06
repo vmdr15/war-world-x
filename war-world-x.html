@@ -123,10 +123,56 @@
             font-size: 0.9rem;
             color: #91a2bc;
         }
+        #storyMenu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: #eef2ff;
+            text-align: center;
+            padding: 20px;
+        }
+        #storyMenu.hidden { display: none; }
+        #storyContent {
+            max-width: 600px;
+            background: rgba(16, 26, 47, 0.96);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 18px;
+            padding: 30px;
+        }
+        #storyContent h1 { color: #b4c5ff; margin-bottom: 20px; }
+        #storyContent p { line-height: 1.6; margin-bottom: 20px; }
+        #startGameBtn {
+            background: linear-gradient(135deg, #0070f2, #4b89ff);
+            color: #eef2ff;
+            border: none;
+            border-radius: 13px;
+            padding: 14px 28px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.18s ease;
+        }
+        #startGameBtn:hover { transform: translateY(-2px); }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div id="game">
+    <div id="storyMenu">
+        <div id="storyContent">
+            <h1>War World X: La Defensa del Pasaje</h1>
+            <p>En un mundo devastado por la guerra, las fuerzas enemigas avanzan implacablemente por un estrecho pasaje hacia tu base principal. Como comandante de la defensa, tu misión es detener la invasión enemiga antes de que llegue a la ola 10.</p>
+            <p>Coloca torres estratégicamente en los bloques verdes, mejora tus defensas y combina diferentes tipos de torres para maximizar tu efectividad. Cada ola trae enemigos más fuertes y numerosos.</p>
+            <p>¿Podrás resistir y salvar tu base? ¡La batalla comienza ahora!</p>
+            <button id="startGameBtn">Iniciar Juego</button>
+        </div>
+    </div>
+    <div id="game" class="hidden">
         <section id="canvasContainer">
             <canvas id="gameCanvas"></canvas>
             <div class="overlay">
@@ -201,6 +247,8 @@
         const startWaveBtn = document.getElementById('startWave');
         const upgradeBtn = document.getElementById('upgradeTower');
         const resetBtn = document.getElementById('resetGame');
+        const storyMenu = document.getElementById('storyMenu');
+        const startGameBtn = document.getElementById('startGameBtn');
 
         const cols = 11;
         const rows = 7;
@@ -279,6 +327,13 @@
             startWaveBtn.addEventListener('click', startNextWave);
             upgradeBtn.addEventListener('click', upgradeSelectedTower);
             resetBtn.addEventListener('click', resetGame);
+            startGameBtn.addEventListener('click', startGame);
+            // Do not start game loop here, wait for start button
+        }
+
+        function startGame() {
+            storyMenu.classList.add('hidden');
+            document.getElementById('game').classList.remove('hidden');
             gameState.lastTimestamp = performance.now();
             requestAnimationFrame(gameLoop);
         }

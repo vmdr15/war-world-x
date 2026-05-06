@@ -169,7 +169,10 @@
             <p>En un mundo devastado por la guerra, las fuerzas enemigas avanzan implacablemente por un estrecho pasaje hacia tu base principal. Como comandante de la defensa, tu misión es detener la invasión enemiga antes de que llegue a la ola 10.</p>
             <p>Coloca torres estratégicamente en los bloques verdes, mejora tus defensas y combina diferentes tipos de torres para maximizar tu efectividad. Cada ola trae enemigos más fuertes y numerosos.</p>
             <p>¿Podrás resistir y salvar tu base? ¡La batalla comienza ahora!</p>
-            <button id="startGameBtn">Iniciar Juego</button>
+            <div style="display: flex; gap: 20px; justify-content: center;">
+                <button id="startStoryBtn" class="btn-primary">Modo Historia</button>
+                <button id="startAdventureBtn" class="btn-secondary">Modo Aventura</button>
+            </div>
         </div>
     </div>
     <div id="game" class="hidden">
@@ -248,7 +251,8 @@
         const upgradeBtn = document.getElementById('upgradeTower');
         const resetBtn = document.getElementById('resetGame');
         const storyMenu = document.getElementById('storyMenu');
-        const startGameBtn = document.getElementById('startGameBtn');
+        const startStoryBtn = document.getElementById('startStoryBtn');
+        const startAdventureBtn = document.getElementById('startAdventureBtn');
 
         const cols = 11;
         const rows = 7;
@@ -307,7 +311,8 @@
             waveActive: false,
             lastTimestamp: 0,
             paused: false,
-            message: 'Selecciona una torre y coloca defensa.'
+            message: 'Selecciona una torre y coloca defensa.',
+            mode: null
         };
 
         function init() {
@@ -327,11 +332,13 @@
             startWaveBtn.addEventListener('click', startNextWave);
             upgradeBtn.addEventListener('click', upgradeSelectedTower);
             resetBtn.addEventListener('click', resetGame);
-            startGameBtn.addEventListener('click', startGame);
+            startStoryBtn.addEventListener('click', () => startGame('story'));
+            startAdventureBtn.addEventListener('click', () => startGame('adventure'));
             // Do not start game loop here, wait for start button
         }
 
-        function startGame() {
+        function startGame(mode) {
+            gameState.mode = mode;
             storyMenu.classList.add('hidden');
             document.getElementById('game').classList.remove('hidden');
             gameState.lastTimestamp = performance.now();

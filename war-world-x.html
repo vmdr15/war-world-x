@@ -361,9 +361,9 @@
         }
 
         const towerTypes = {
-            cannon: { name: 'Cañón', cost: 60, range: 150, damage: 24, fireRate: 0.9, color: '#f6d55c', description: 'Daño sólido contra un objetivo.' },
-            laser: { name: 'Láser', cost: 90, range: 170, damage: 10, fireRate: 0.18, color: '#62d6f8', description: 'Dispara rápido y mantiene la presión.' },
-            mortar: { name: 'Mortero', cost: 110, range: 220, damage: 45, fireRate: 1.6, radius: 28, color: '#f08a5d', description: 'Impacto en área, útil contra grupos.' }
+            cannon: { name: 'Cañón', cost: 60, range: 150, damage: 24, fireRate: 0.6, color: '#f6d55c', description: 'Daño sólido contra un objetivo.', gif: 'tower-cannon.gif' },
+            laser: { name: 'Láser', cost: 90, range: 170, damage: 10, fireRate: 0.12, color: '#62d6f8', description: 'Dispara rápido y mantiene la presión.', gif: 'tower-laser.gif' },
+            mortar: { name: 'Mortero', cost: 110, range: 220, damage: 45, fireRate: 1.2, radius: 28, color: '#f08a5d', description: 'Impacto en área, útil contra grupos.', gif: 'tower-mortar.gif' }
         };
 
         const enemyTypes = [
@@ -388,8 +388,19 @@
             mode: null
         };
 
+        let towerImages = {};
+
+        function loadImages() {
+            Object.keys(towerTypes).forEach(key => {
+                const img = new Image();
+                img.src = towerTypes[key].gif;
+                towerImages[key] = img;
+            });
+        }
+
         function init() {
             resizeCanvas();
+            loadImages();
             window.addEventListener('resize', resizeCanvas);
             towerButtons.innerHTML = '';
             Object.entries(towerTypes).forEach(([key, tower]) => {
@@ -750,14 +761,20 @@
             gameState.towers.forEach(tower => {
                 const x = tower.x;
                 const y = tower.y;
-                const towerType = towerTypes[tower.type];
-                ctx.fillStyle = towerType.color;
-                ctx.beginPath();
-                ctx.arc(x, y, 18, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
+                const img = towerImages[tower.type];
+                if (img.complete) {
+                    ctx.drawImage(img, x - 20, y - 20, 40, 40);
+                } else {
+                    // Fallback to circle if image not loaded
+                    const towerType = towerTypes[tower.type];
+                    ctx.fillStyle = towerType.color;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 18, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 14px Arial';
                 ctx.textAlign = 'center';

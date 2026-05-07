@@ -770,7 +770,7 @@
                 const y = tower.y;
                 const img = towerImages[tower.type];
                 if (img.complete) {
-                    ctx.drawImage(img, x - 20, y - 20, 40, 40);
+                    ctx.drawImage(img, x - cellSize / 2 + 5, y - cellSize / 2 + 5, cellSize - 10, cellSize - 10);
                 } else {
                     // Fallback to circle if image not loaded
                     const towerType = towerTypes[tower.type];
@@ -794,7 +794,7 @@
                 const pos = getEnemyPosition(enemy);
                 const img = enemyImages[enemy.type];
                 if (img && img.complete) {
-                    ctx.drawImage(img, pos.x - 16, pos.y - 16, 32, 32);
+                    ctx.drawImage(img, pos.x - 25, pos.y - 25, 50, 50);
                 } else {
                     // Fallback to circle
                     ctx.fillStyle = enemy.color;
@@ -803,10 +803,10 @@
                     ctx.fill();
                 }
                 ctx.fillStyle = '#111f2c';
-                ctx.fillRect(pos.x - 20, pos.y + 20, 40, 6);
+                ctx.fillRect(pos.x - 20, pos.y + 25, 40, 6);
                 ctx.fillStyle = '#88e5ff';
                 const hpRatio = Math.max(enemy.hp / enemy.maxHp, 0);
-                ctx.fillRect(pos.x - 20, pos.y + 20, 40 * hpRatio, 6);
+                ctx.fillRect(pos.x - 20, pos.y + 25, 40 * hpRatio, 6);
             });
         }
 

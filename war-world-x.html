@@ -160,6 +160,47 @@
         }
         #startGameBtn:hover { transform: translateY(-2px); }
         .hidden { display: none; }
+        #victoryScreen, #mapScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: #eef2ff;
+            text-align: center;
+            padding: 20px;
+        }
+        #victoryScreen.hidden, #mapScreen.hidden { display: none; }
+        #victoryContent, #mapContent {
+            max-width: 600px;
+            background: rgba(16, 26, 47, 0.96);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 18px;
+            padding: 30px;
+        }
+        #victoryContent h1, #mapContent h1 { color: #b4c5ff; margin-bottom: 20px; }
+        #victoryContent p, #mapContent p { line-height: 1.6; margin-bottom: 20px; }
+        #mapContent .missions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #mapContent button {
+            background: linear-gradient(135deg, #0070f2, #4b89ff);
+            color: #eef2ff;
+            border: none;
+            border-radius: 13px;
+            padding: 14px 28px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.18s ease;
+        }
+        #mapContent button:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -172,6 +213,25 @@
             <div style="display: flex; gap: 20px; justify-content: center;">
                 <button id="startStoryBtn" class="btn-primary">Modo Historia</button>
                 <button id="startAdventureBtn" class="btn-secondary">Modo Aventura</button>
+            </div>
+        </div>
+    </div>
+    <div id="victoryScreen" class="hidden">
+        <div id="victoryContent">
+            <h1>¡Misión Completada!</h1>
+            <p>Has defendido exitosamente tu base contra las 10 olas enemigas. ¡Felicidades, comandante!</p>
+            <p>Ahora puedes elegir una nueva misión en el mapa para continuar la aventura.</p>
+            <button id="goToMapBtn">Ir al Mapa</button>
+        </div>
+    </div>
+    <div id="mapScreen" class="hidden">
+        <div id="mapContent">
+            <h1>Mapa de Misiones</h1>
+            <p>Selecciona una nueva misión para continuar tu campaña.</p>
+            <div class="missions">
+                <button id="mission1Btn">Misión 1: Defensa Avanzada</button>
+                <button id="mission2Btn">Misión 2: Asalto Nocturno</button>
+                <button id="backToMenuBtn">Volver al Menú</button>
             </div>
         </div>
     </div>
@@ -253,6 +313,12 @@
         const storyMenu = document.getElementById('storyMenu');
         const startStoryBtn = document.getElementById('startStoryBtn');
         const startAdventureBtn = document.getElementById('startAdventureBtn');
+        const victoryScreen = document.getElementById('victoryScreen');
+        const goToMapBtn = document.getElementById('goToMapBtn');
+        const mapScreen = document.getElementById('mapScreen');
+        const mission1Btn = document.getElementById('mission1Btn');
+        const mission2Btn = document.getElementById('mission2Btn');
+        const backToMenuBtn = document.getElementById('backToMenuBtn');
 
         const cols = 11;
         const rows = 7;
@@ -334,15 +400,42 @@
             resetBtn.addEventListener('click', resetGame);
             startStoryBtn.addEventListener('click', () => startGame('story'));
             startAdventureBtn.addEventListener('click', () => startGame('adventure'));
+            goToMapBtn.addEventListener('click', showMap);
+            mission1Btn.addEventListener('click', () => startMission(1));
+            mission2Btn.addEventListener('click', () => startMission(2));
+            backToMenuBtn.addEventListener('click', showStoryMenu);
             // Do not start game loop here, wait for start button
         }
 
         function startGame(mode) {
             gameState.mode = mode;
             storyMenu.classList.add('hidden');
+            victoryScreen.classList.add('hidden');
+            mapScreen.classList.add('hidden');
             document.getElementById('game').classList.remove('hidden');
             gameState.lastTimestamp = performance.now();
             requestAnimationFrame(gameLoop);
+        }
+
+        function showVictory() {
+            document.getElementById('game').classList.add('hidden');
+            victoryScreen.classList.remove('hidden');
+        }
+
+        function showMap() {
+            victoryScreen.classList.add('hidden');
+            mapScreen.classList.remove('hidden');
+        }
+
+        function startMission(missionId) {
+            // For now, reset game and start again, perhaps with different settings later
+            resetGame();
+            startGame('story'); // or based on mission
+        }
+
+        function showStoryMenu() {
+            mapScreen.classList.add('hidden');
+            storyMenu.classList.remove('hidden');
         }
 
         function selectTowerType(key) {
@@ -513,6 +606,9 @@
                 gameState.waveActive = false;
                 gameState.gold += 35 + gameState.wave * 12;
                 gameState.message = `Ola ${gameState.wave} defendida. Prepara la siguiente.`;
+                if (gameState.mode === 'story' && gameState.wave === 10) {
+                    showVictory();
+                }
             }
 
             gameState.towers.forEach(tower => {

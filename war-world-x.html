@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>War World X - Batalla Estratégica</title>
-    <script src="https://cdn.jsdelivr.net/npm/gifler@0.1.0/gifler.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/libgif-js@1.0.0/libgif.js"></script>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -391,8 +391,8 @@
 
         let towerImages = {};
         let enemyImages = {};
-        let towerAnimators = {};
-        let enemyAnimators = {};
+        let towerGifs = {};
+        let enemyGifs = {};
 
         function loadImages() {
             Object.keys(towerTypes).forEach(key => {
@@ -400,8 +400,9 @@
                 img.src = towerTypes[key].gif;
                 towerImages[key] = img;
                 // For animation
-                gifler(towerTypes[key].gif).get(animator => {
-                    towerAnimators[key] = animator;
+                const gif = new SuperGif({ gif: img });
+                gif.load(() => {
+                    towerGifs[key] = gif;
                 });
             });
             enemyTypes.forEach((enemy, index) => {
@@ -409,8 +410,9 @@
                 img.src = enemy.gif;
                 enemyImages[index] = img;
                 // For animation
-                gifler(enemy.gif).get(animator => {
-                    enemyAnimators[index] = animator;
+                const gif = new SuperGif({ gif: img });
+                gif.load(() => {
+                    enemyGifs[index] = gif;
                 });
             });
         }
@@ -697,6 +699,7 @@
                 }
                 if (tower.type === 'laser') nearest.enemy.slowed = 0.8;
                 tower.cooldown = Math.max(0.08, towerType.fireRate - tower.level * 0.05);
+                if (towerGifs[tower.type]) towerGifs[tower.type].move_to(0);
             });
 
             const defeated = gameState.enemies.filter(enemy => enemy.hp <= 0);
@@ -779,8 +782,11 @@
             gameState.towers.forEach(tower => {
                 const x = tower.x;
                 const y = tower.y;
+                const gif = towerGifs[tower.type];
                 const img = towerImages[tower.type];
-                if (img && img.complete) {
+                if (tower.cooldown > 0 && gif) {
+                    ctx.drawImage(gif.get_canvas(), x - cellSize / 2 + 5, y - cellSize / 2 + 5, cellSize - 10, cellSize - 10);
+                } else if (img && img.complete) {
                     ctx.drawImage(img, x - cellSize / 2 + 5, y - cellSize / 2 + 5, cellSize - 10, cellSize - 10);
                 } else {
                     // Fallback to circle if image not loaded
@@ -803,9 +809,11 @@
         function drawEnemies() {
             gameState.enemies.forEach(enemy => {
                 const pos = getEnemyPosition(enemy);
-                const img = enemyImages[enemy.type];
-                if (img && img.complete) {
-                    ctx.drawImage(img, pos.x - 25, pos.y - 25, 50, 50);
+                const gif = enemyGifs[enemy.type];
+                if (gif) {
+                    ctx.drawImage(gif.get_canvas(), pos.x - 25, pos.y - 25, 50, 50);
+                } else if (enemyImages[enemy.type] && enemyImages[enemy.type].complete) {
+                    ctx.drawImage(enemyImages[enemy.type], pos.x - 25, pos.y - 25, 50, 50);
                 } else {
                     // Fallback to circle
                     ctx.fillStyle = enemy.color;

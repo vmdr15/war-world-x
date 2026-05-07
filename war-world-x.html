@@ -806,11 +806,9 @@
         function drawEnemies() {
             gameState.enemies.forEach(enemy => {
                 const pos = getEnemyPosition(enemy);
-                const animator = enemyAnimators[enemy.type];
-                if (animator) {
-                    ctx.drawImage(animator.getCanvas(), pos.x - 25, pos.y - 25, 50, 50);
-                } else if (enemyImages[enemy.type] && enemyImages[enemy.type].complete) {
-                    ctx.drawImage(enemyImages[enemy.type], pos.x - 25, pos.y - 25, 50, 50);
+                const img = enemyImages[enemy.type];
+                if (img && img.complete) {
+                    ctx.drawImage(img, pos.x - 25, pos.y - 25, 50, 50);
                 } else {
                     // Fallback to circle
                     ctx.fillStyle = enemy.color;

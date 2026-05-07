@@ -779,11 +779,8 @@
             gameState.towers.forEach(tower => {
                 const x = tower.x;
                 const y = tower.y;
-                const animator = towerAnimators[tower.type];
                 const img = towerImages[tower.type];
-                if (tower.cooldown > 0 && animator) {
-                    ctx.drawImage(animator.getCanvas(), x - cellSize / 2 + 5, y - cellSize / 2 + 5, cellSize - 10, cellSize - 10);
-                } else if (img && img.complete) {
+                if (img && img.complete) {
                     ctx.drawImage(img, x - cellSize / 2 + 5, y - cellSize / 2 + 5, cellSize - 10, cellSize - 10);
                 } else {
                     // Fallback to circle if image not loaded

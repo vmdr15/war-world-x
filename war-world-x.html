@@ -780,10 +780,11 @@
                 const x = tower.x;
                 const y = tower.y;
                 const animator = towerAnimators[tower.type];
-                if (animator) {
+                const img = towerImages[tower.type];
+                if (tower.cooldown > 0 && animator) {
                     ctx.drawImage(animator.getCanvas(), x - cellSize / 2 + 5, y - cellSize / 2 + 5, cellSize - 10, cellSize - 10);
-                } else if (towerImages[tower.type] && towerImages[tower.type].complete) {
-                    ctx.drawImage(towerImages[tower.type], x - cellSize / 2 + 5, y - cellSize / 2 + 5, cellSize - 10, cellSize - 10);
+                } else if (img && img.complete) {
+                    ctx.drawImage(img, x - cellSize / 2 + 5, y - cellSize / 2 + 5, cellSize - 10, cellSize - 10);
                 } else {
                     // Fallback to circle if image not loaded
                     const towerType = towerTypes[tower.type];

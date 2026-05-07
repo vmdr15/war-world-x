@@ -361,15 +361,15 @@
         }
 
         const towerTypes = {
-            cannon: { name: 'Cañón', cost: 60, range: 150, damage: 24, fireRate: 0.6, color: '#f6d55c', description: 'Daño sólido contra un objetivo.', gif: 'tower-cannon.gif' },
-            laser: { name: 'Láser', cost: 90, range: 170, damage: 10, fireRate: 0.12, color: '#62d6f8', description: 'Dispara rápido y mantiene la presión.', gif: 'tower-laser.gif' },
-            mortar: { name: 'Mortero', cost: 110, range: 220, damage: 45, fireRate: 1.2, radius: 28, color: '#f08a5d', description: 'Impacto en área, útil contra grupos.', gif: 'tower-mortar.gif' }
+            cannon: { name: 'Cañón', cost: 60, range: 150, damage: 24, fireRate: 0.6, color: '#f6d55c', description: 'Daño sólido contra un objetivo.', gif: 'assets/tower-cannon.gif' },
+            laser: { name: 'Láser', cost: 90, range: 170, damage: 10, fireRate: 0.12, color: '#62d6f8', description: 'Dispara rápido y mantiene la presión.', gif: 'assets/tower-laser.gif' },
+            mortar: { name: 'Mortero', cost: 110, range: 220, damage: 45, fireRate: 1.2, radius: 28, color: '#f08a5d', description: 'Impacto en área, útil contra grupos.', gif: 'assets/tower-mortar.gif' }
         };
 
         const enemyTypes = [
-            { name: 'Guerrillero', hp: 60, speed: 0.9, reward: 18, color: '#ff7373' },
-            { name: 'Tropa pesada', hp: 150, speed: 0.5, reward: 32, color: '#ffb03b' },
-            { name: 'Blindado', hp: 310, speed: 0.27, reward: 60, color: '#7ec8e3' }
+            { name: 'Guerrillero', hp: 60, speed: 0.9, reward: 18, color: '#ff7373', gif: 'assets/enemy-guerrillero.gif' },
+            { name: 'Tropa pesada', hp: 150, speed: 0.5, reward: 32, color: '#ffb03b', gif: 'assets/enemy-tropa.gif' },
+            { name: 'Blindado', hp: 310, speed: 0.27, reward: 60, color: '#7ec8e3', gif: 'assets/enemy-blindado.gif' }
         ];
 
         let gameState = {
@@ -389,12 +389,18 @@
         };
 
         let towerImages = {};
+        let enemyImages = {};
 
         function loadImages() {
             Object.keys(towerTypes).forEach(key => {
                 const img = new Image();
                 img.src = towerTypes[key].gif;
                 towerImages[key] = img;
+            });
+            enemyTypes.forEach((enemy, index) => {
+                const img = new Image();
+                img.src = enemy.gif;
+                enemyImages[index] = img;
             });
         }
 
@@ -562,7 +568,8 @@
                     maxHp: enemyDef.hp,
                     hp: enemyDef.hp + wave * 8,
                     progress: -i * 60,
-                    slowed: 0
+                    slowed: 0,
+                    type: enemyTypes.indexOf(enemyDef)
                 });
             }
             return enemies;
@@ -785,10 +792,16 @@
         function drawEnemies() {
             gameState.enemies.forEach(enemy => {
                 const pos = getEnemyPosition(enemy);
-                ctx.fillStyle = enemy.color;
-                ctx.beginPath();
-                ctx.arc(pos.x, pos.y, 16, 0, Math.PI * 2);
-                ctx.fill();
+                const img = enemyImages[enemy.type];
+                if (img && img.complete) {
+                    ctx.drawImage(img, pos.x - 16, pos.y - 16, 32, 32);
+                } else {
+                    // Fallback to circle
+                    ctx.fillStyle = enemy.color;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, 16, 0, Math.PI * 2);
+                    ctx.fill();
+                }
                 ctx.fillStyle = '#111f2c';
                 ctx.fillRect(pos.x - 20, pos.y + 20, 40, 6);
                 ctx.fillStyle = '#88e5ff';

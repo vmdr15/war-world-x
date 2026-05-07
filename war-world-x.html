@@ -215,7 +215,6 @@
                 <button id="startStoryBtn" class="btn-primary">Modo Historia</button>
                 <button id="startAdventureBtn" class="btn-secondary">Modo Aventura</button>
             </div>
-            <div id="modeNotice" class="tower-details" style="margin-top: 18px; color: #ffd16a; display: none;"></div>
         </div>
     </div>
     <div id="victoryScreen" class="hidden">
@@ -319,7 +318,6 @@
         const storyMenu = document.getElementById('storyMenu');
         const startStoryBtn = document.getElementById('startStoryBtn');
         const startAdventureBtn = document.getElementById('startAdventureBtn');
-        const modeNotice = document.getElementById('modeNotice');
         const victoryScreen = document.getElementById('victoryScreen');
         const goToMapBtn = document.getElementById('goToMapBtn');
         const mapScreen = document.getElementById('mapScreen');
@@ -436,7 +434,7 @@
             upgradeBtn.addEventListener('click', upgradeSelectedTower);
             resetBtn.addEventListener('click', resetGame);
             startStoryBtn.addEventListener('click', () => startGame('story'));
-            startAdventureBtn.addEventListener('click', showAdventureNotice);
+            startAdventureBtn.addEventListener('click', () => startGame('adventure'));
             goToMapBtn.addEventListener('click', showMap);
             mission1Btn.addEventListener('click', () => startMission(1));
             mission2Btn.addEventListener('click', () => startMission(2));
@@ -447,11 +445,13 @@
 
         function startGame(mode) {
             gameState.mode = mode;
-            modeNotice.style.display = 'none';
             storyMenu.classList.add('hidden');
             victoryScreen.classList.add('hidden');
             mapScreen.classList.add('hidden');
             document.getElementById('game').classList.remove('hidden');
+            if (mode === 'adventure') {
+                gameState.message = 'Modo Aventura aún está en desarrollo. Disfruta el Modo Historia por ahora.';
+            }
             gameState.lastTimestamp = performance.now();
             requestAnimationFrame(gameLoop);
         }

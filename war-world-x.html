@@ -398,20 +398,28 @@
                 img.src = towerTypes[key].gif;
                 towerImages[key] = img;
                 // For animation
-                const gif = new SuperGif({ gif: img });
-                gif.load(() => {
-                    towerGifs[key] = gif;
-                });
+                try {
+                    const gif = new SuperGif({ gif: img });
+                    gif.load(() => {
+                        towerGifs[key] = gif;
+                    });
+                } catch (e) {
+                    console.warn('Failed to load GIF for', key, e);
+                }
             });
             enemyTypes.forEach((enemy, index) => {
                 const img = new Image();
                 img.src = enemy.gif;
                 enemyImages[index] = img;
                 // For animation
-                const gif = new SuperGif({ gif: img });
-                gif.load(() => {
-                    enemyGifs[index] = gif;
-                });
+                try {
+                    const gif = new SuperGif({ gif: img });
+                    gif.load(() => {
+                        enemyGifs[index] = gif;
+                    });
+                } catch (e) {
+                    console.warn('Failed to load enemy GIF for', index, e);
+                }
             });
         }
 
